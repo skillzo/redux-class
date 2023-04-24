@@ -1,13 +1,22 @@
-import { Route, Routes } from "react-router-dom";
+import {
+  Route,
+  RouterProvider,
+  Routes,
+  createBrowserRouter,
+  createRoutesFromChildren,
+} from "react-router-dom";
 import "./App.css";
 import PostList from "./features/post/PostList";
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<PostList />} />
-    </Routes>
+  const router = createBrowserRouter(
+    createRoutesFromChildren(
+      <Route>
+        <Route path="/" element={<PostList />} />
+      </Route>
+    )
   );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

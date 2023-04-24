@@ -13,8 +13,6 @@ export default function AddPost() {
     userId: "",
   });
 
-  console.log(post);
-
   const handleChange = (e) => {
     setpost({
       ...post,
@@ -22,13 +20,14 @@ export default function AddPost() {
     });
   };
 
-  const renderedUser = users.map((i) => {
+  const renderedUser = users?.map((i) => {
     return (
       <option key={i.id} value={i.name}>
         {i.name}
       </option>
     );
   });
+  console.log(users);
 
   return (
     <section>
