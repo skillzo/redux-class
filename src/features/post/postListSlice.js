@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  createSelector,
+  nanoid,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { sub } from "date-fns";
 
@@ -94,40 +99,43 @@ const postSlice = createSlice({
       });
     },
   },
-  extraReducers: {
-    [fecthPost.pending]: (state) => {
-      state.status = "loading";
-    },
-    [fecthPost.fulfilled]: (state, { payload }) => {
-      state.status = "succeeded";
+  extraReducers(builder) {
+    builder
+      .addCase(fecthPost.pending, (state, { payload }) => {
+        state.status = "laoding";
+      })
+      .addCase(fecthPost.fulfilled, (state, { payload }) => {
+        state.status = "succeeded";
 
-      // do this to add more key value to the result gotten from the api
-      let min = 1;
-      const loadedPost = payload.map((i) => {
-        i.date = sub(new Date(), { minutes: min++ }).toISOString();
-        i.reactions = {
-          thumbsUp: 0,
-          wow: 0,
-          heart: 0,
-          rocket: 0,
-          coffee: 0,
-        };
-        return i;
+        // do this to add more key value to the result gotten from the api
+        let min = 1;
+        const loadedPost = payload.map((i) => {
+          i.date = sub(new Date(), { minutes: min++ }).toISOString();
+          i.reactions = {
+            thumbsUp: 0,
+            wow: 0,
+            heart: 0,
+            rocket: 0,
+            coffee: 0,
+          };
+          return i;
+        });
+
+        // for every loaded object of post add this above schema to the object
+        state.posts = state.posts.concat(loadedPost);
+      })
+      .addCase(fecthPost.rejected, (state, { payload }) => {
+        state.status = "failed";
+        state.error = payload.error.message;
       });
-
-      // for every loaded object of post add this above schema to the object
-      state.posts = state.posts.concat(loadedPost);
-    },
-    [fecthPost.rejected]: (state, { payload }) => {
-      state.status = "failed";
-      state.error = payload.error.message;
-    },
   },
 });
 
 export const allPost = (state) => state.post.posts;
 export const allStatus = (state) => state.post.status;
 export const allError = (state) => state.post.error;
+export const postById = (state, postId) =>
+  state.post.posts?.find((post) => post.id === postId);
 export const { addPost, deletePost, addReaction } = postSlice.actions;
 export default postSlice.reducer;
 

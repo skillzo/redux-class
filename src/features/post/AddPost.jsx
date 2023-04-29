@@ -27,7 +27,6 @@ export default function AddPost() {
       </option>
     );
   });
-  console.log(users);
 
   return (
     <section>

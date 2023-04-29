@@ -6,17 +6,14 @@ import Timeago from "./Timeago";
 import ReactionButtons from "./ReactionButtons";
 import { nanoid } from "@reduxjs/toolkit";
 import { allUsers } from "./users/usersSlice";
+import { Link } from "react-router-dom";
 
-export default function PostList() {
+let PostList = () => {
   const dispatch = useDispatch();
 
-  const posts = useSelector(allPost);
   const status = useSelector(allStatus);
   const error = useSelector(allError);
   const post = useSelector(allPost);
-  const users = useSelector(allUsers);
-
-  console.log(users);
   useEffect(() => {
     if (status === "idle") {
       dispatch(fecthPost());
@@ -36,6 +33,7 @@ export default function PostList() {
           <h3>{i?.title?.substring(0, 10)}</h3>
           <p>{i?.body?.substring(0, 100)}</p>
           <p className="postCredit">
+            <Link to={`/post/${i.id}`}>view Post</Link>
             <span>by {i?.userId || "unknown"}</span>
             <Timeago timestamp={i?.date} />
           </p>
@@ -54,4 +52,6 @@ export default function PostList() {
       {renderedPost}
     </section>
   );
-}
+};
+PostList = React.memo(PostList);
+export default PostList;
